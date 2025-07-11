@@ -1,9 +1,140 @@
-<form (ngSubmit)="submit()">
-  <div>
-    <input type="text" [(ngModel)]="hotel.name" name="name" placeholder="Hotel Name" required />
+<form (ngSubmit)="submit()" #hotelForm="ngForm" class="hotel-form">
+  <div class="form-group">
+    <label for="name">Hotel Name</label>
+    <input 
+      type="text" 
+      id="name"
+      name="name" 
+      [(ngModel)]="hotel.name" 
+      placeholder="Enter hotel name" 
+      required
+      #name="ngModel"
+      [class.is-invalid]="name.invalid && (name.dirty || name.touched)"
+    >
+    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error-message">
+      Hotel name is required
+    </div>
   </div>
-  <div>
-    <input type="text" [(ngModel)]="hotel.location" name="location" placeholder="Location" required />
+  
+  <div class="form-group">
+    <label for="location">Location</label>
+    <input 
+      type="text" 
+      id="location"
+      name="location" 
+      [(ngModel)]="hotel.location" 
+      placeholder="Enter location" 
+      required
+      #location="ngModel"
+      [class.is-invalid]="location.invalid && (location.dirty || location.touched)"
+    >
+    <div *ngIf="location.invalid && (location.dirty || location.touched)" class="error-message">
+      Location is required
+    </div>
   </div>
-  <button type="submit">Add Hotel</button>
+  
+  <div class="form-actions">
+    <button 
+      type="submit" 
+      [disabled]="hotelForm.invalid || isSubmitting"
+      [class.loading]="isSubmitting"
+    >
+      <span *ngIf="!isSubmitting">Add Hotel</span>
+      <span *ngIf="isSubmitting">Adding...</span>
+    </button>
+  </div>
+  
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
 </form>
+
+<style>
+  .hotel-form {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  }
+  
+  input.is-invalid {
+    border-color: #c62828;
+  }
+  
+  .error-message {
+    color: #c62828;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  .form-actions {
+    margin-top: 1.5rem;
+  }
+  
+  button {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover:not(:disabled) {
+    background-color: #1565c0;
+  }
+  
+  button:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  button.loading {
+    position: relative;
+    color: transparent;
+  }
+  
+  button.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>

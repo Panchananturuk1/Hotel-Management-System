@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { HotelService } from '../../services/hotel.service';
 import { Hotel } from '../../models/hotel';
 
@@ -10,13 +11,31 @@ import { Hotel } from '../../models/hotel';
 export class HotelFormComponent {
   hotel: Hotel = { name: '', location: '' };
   @Output() refresh = new EventEmitter<void>();
+  isSubmitting = false;
+  error: string | null = null;
 
   constructor(private hotelService: HotelService) {}
 
   submit(): void {
-    this.hotelService.createHotel(this.hotel).subscribe(() => {
-      this.hotel = { name: '', location: '' };
-      this.refresh.emit();
+    if (this.isSubmitting) return;
+    
+    this.isSubmitting = true;
+    this.error = null;
+    
+    this.hotelService.createHotel(this.hotel).subscribe({
+      next: () => {
+        this.hotel = { name: '', location: '' };
+        this.refresh.emit();
+      },
+      error: (err) => {
+        this.error = 'Failed to create hotel. Please try again.';
+        if (err.error?.message) {
+          this.error = err.error.message;
+        }
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      }
     });
   }
 }

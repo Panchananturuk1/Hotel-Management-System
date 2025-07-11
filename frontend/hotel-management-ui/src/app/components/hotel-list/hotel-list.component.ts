@@ -9,6 +9,8 @@ import { Hotel } from '../../models/hotel';
 })
 export class HotelListComponent implements OnInit {
   hotels: Hotel[] = [];
+  isLoading = true;
+  error: string | null = null;
 
   constructor(private hotelService: HotelService) {}
 
@@ -17,14 +19,33 @@ export class HotelListComponent implements OnInit {
   }
 
   loadHotels(): void {
-    this.hotelService.getHotels().subscribe((data) => {
-      this.hotels = data;
+    this.isLoading = true;
+    this.error = null;
+    
+    this.hotelService.getHotels().subscribe({
+      next: (data) => {
+        this.hotels = data;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.error = 'Failed to load hotels. Please try again later.';
+        this.isLoading = false;
+      }
     });
   }
 
   deleteHotel(id: number): void {
-    this.hotelService.deleteHotel(id).subscribe(() => {
-      this.loadHotels();
+    if (!confirm('Are you sure you want to delete this hotel?')) {
+      return;
+    }
+
+    this.hotelService.deleteHotel(id).subscribe({
+      next: () => {
+        this.loadHotels();
+      },
+      error: () => {
+        this.error = 'Failed to delete hotel. Please try again.';
+      }
     });
   }
 }

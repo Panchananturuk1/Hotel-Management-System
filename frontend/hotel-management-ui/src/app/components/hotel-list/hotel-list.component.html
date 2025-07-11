@@ -1,9 +1,104 @@
-<h2>Hotel List</h2>
-<app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
+<div class="hotel-list">
+  <h2>Hotel List</h2>
+  
+  <!-- Add Hotel Form -->
+  <div class="card">
+    <h3>Add New Hotel</h3>
+    <app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
+  </div>
 
-<ul>
-  <li *ngFor="let hotel of hotels">
-    {{ hotel.name }} - {{ hotel.location }}
-    <button (click)="deleteHotel(hotel.id!)">Delete</button>
-  </li>
-</ul>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading hotels...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button (click)="loadHotels()">Retry</button>
+  </div>
+
+  <!-- Hotels List -->
+  <div *ngIf="!isLoading && !error">
+    <div *ngIf="hotels.length === 0" class="no-hotels">
+      <p>No hotels found. Add your first hotel above!</p>
+    </div>
+
+    <ul class="hotels" *ngIf="hotels.length > 0">
+      <li *ngFor="let hotel of hotels" class="hotel-item">
+        <div class="hotel-info">
+          <h3>{{ hotel.name }}</h3>
+          <p><strong>Location:</strong> {{ hotel.location }}</p>
+        </div>
+        <button (click)="deleteHotel(hotel.id!)" class="delete-btn">Delete</button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .hotel-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .hotels {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .hotel-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .hotel-info {
+    flex-grow: 1;
+  }
+  
+  .delete-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .delete-btn:hover {
+    background: #cc0000;
+  }
+  
+  .loading, .error, .no-hotels {
+    text-align: center;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+  }
+  
+  .error {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  .no-hotels {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+</style>

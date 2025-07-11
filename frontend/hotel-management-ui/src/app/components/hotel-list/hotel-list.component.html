@@ -1,0 +1,9 @@
+<h2>Hotel List</h2>
+<app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
+
+<ul>
+  <li *ngFor="let hotel of hotels">
+    {{ hotel.name }} - {{ hotel.location }}
+    <button (click)="deleteHotel(hotel.id!)">Delete</button>
+  </li>
+</ul>

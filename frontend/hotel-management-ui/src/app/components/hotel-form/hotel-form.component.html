@@ -1,0 +1,9 @@
+<form (ngSubmit)="submit()">
+  <div>
+    <input type="text" [(ngModel)]="hotel.name" name="name" placeholder="Hotel Name" required />
+  </div>
+  <div>
+    <input type="text" [(ngModel)]="hotel.location" name="location" placeholder="Location" required />
+  </div>
+  <button type="submit">Add Hotel</button>
+</form>

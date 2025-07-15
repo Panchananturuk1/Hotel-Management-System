@@ -1,10 +1,8 @@
 package com.example.hotel_management.controller;
 
-
-
+import org.springframework.web.bind.annotation.*;
 import com.example.hotel_management.model.Hotel;
 import com.example.hotel_management.service.HotelService;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -12,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {
-
     private final HotelService hotelService;
 
     public HotelController(HotelService hotelService) {
@@ -29,14 +26,13 @@ public class HotelController {
         return hotelService.getHotelById(id);
     }
 
-    @PostMapping
     public Hotel createHotel(@RequestBody Hotel hotel) {
         return hotelService.createHotel(hotel);
     }
 
     @PutMapping("/{id}")
-    public Hotel updateHotel(@PathVariable Long id, @RequestBody Hotel hotel) {
-        return hotelService.updateHotel(id, hotel);
+    public Hotel updateHotel(@PathVariable Long id, @RequestBody Hotel hotelDetails) {
+        return hotelService.updateHotel(id, hotelDetails);
     }
 
     @DeleteMapping("/{id}")

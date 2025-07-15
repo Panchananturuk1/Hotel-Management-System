@@ -1,7 +1,5 @@
 package com.example.hotel_management.service;
 
-
-
 import com.example.hotel_management.model.Hotel;
 import com.example.hotel_management.repository.HotelRepository;
 import org.springframework.stereotype.Service;

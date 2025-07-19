@@ -1,6 +1,8 @@
 package com.example.hotel_management.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,8 +21,10 @@ public class Hotel {
     @Column(name = "created_date", nullable = false, updatable = false)
     private Date createdDate;
 
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms;
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private List<Room> rooms = new ArrayList<>();
 
     // Getters & Setters
     public Long getId() {

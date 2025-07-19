@@ -1,6 +1,7 @@
 package com.example.hotel_management.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.*;
 
 @Entity
 @Table(name = "rooms")
@@ -13,8 +14,10 @@ public class Room {
     private String type;
     private double price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
+    @JsonBackReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Hotel hotel;
 
     // Getters

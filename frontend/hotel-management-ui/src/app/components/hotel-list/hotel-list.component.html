@@ -1,14 +1,26 @@
 <div class="hotel-list">
-  <h2>Hotel List</h2>
-  
+  <header class="header">
+    <h2>Hotel Listings</h2>
+    <div class="search-bar">
+      <input type="text" placeholder="Search hotels..." (input)="filterHotels($event)">
+      <select (change)="filterByRating($event)">
+        <option value="">All Ratings</option>
+        <option value="4.5">4.5+</option>
+        <option value="4.0">4.0+</option>
+        <option value="3.5">3.5+</option>
+      </select>
+    </div>
+  </header>
+
   <!-- Add Hotel Form -->
-  <div class="card">
+  <div class="card add-hotel">
     <h3>Add New Hotel</h3>
     <app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
     <p>Loading hotels...</p>
   </div>
 
@@ -20,19 +32,44 @@
 
   <!-- Hotels List -->
   <div *ngIf="!isLoading && !error">
-    <div *ngIf="hotels.length === 0" class="no-hotels">
-      <p>No hotels found. Add your first hotel above!</p>
+    <div *ngIf="filteredHotels.length === 0" class="no-hotels">
+      <p>No hotels found matching your criteria.</p>
     </div>
 
-    <ul class="hotels" *ngIf="hotels.length > 0">
-      <li *ngFor="let hotel of hotels" class="hotel-item">
-        <div class="hotel-info">
+    <div class="hotels-grid">
+      <div *ngFor="let hotel of filteredHotels" class="hotel-card">
+        <div class="hotel-header">
           <h3>{{ hotel.name }}</h3>
-          <p><strong>Location:</strong> {{ hotel.location }}</p>
+          <div class="rating">
+            <span class="stars">{{ getStarRating(hotel.rating) }}</span>
+            <span class="rating-value">{{ hotel.rating }}/5.0</span>
+          </div>
         </div>
-        <button (click)="deleteHotel(hotel.id!)" class="delete-btn">Delete</button>
-      </li>
-    </ul>
+        <div class="hotel-body">
+          <p class="location">📍 {{ hotel.location }}</p>
+          
+          <!-- Show rooms for the selected hotel -->
+          <div class="rooms-section" *ngIf="selectedHotelId === hotel.id">
+            <app-room-list 
+              [hotelId]="hotel.id!" 
+              [hotelName]="hotel.name">
+            </app-room-list>
+          </div>
+          
+          <div class="actions">
+            <button 
+              class="btn view-btn" 
+              (click)="toggleRooms(hotel.id!)"
+            >
+              {{ selectedHotelId === hotel.id ? 'Hide Rooms' : 'View Rooms' }}
+            </button>
+          </div>
+        </div>
+        <button class="delete-btn" (click)="deleteHotel(hotel.id!)" title="Delete Hotel">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 

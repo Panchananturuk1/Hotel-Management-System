@@ -1,11 +1,18 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule, NgbDateParserFormatter, NgbDatepickerModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { HotelListComponent } from './components/hotel-list/hotel-list.component';
 import { HotelFormComponent } from './components/hotel-form/hotel-form.component';
+import { RoomListComponent } from './components/room-list/room-list.component';
+import { BookingFormComponent } from './components/booking-form/booking-form.component';
+import { HotelService } from './services/hotel.service';
+import { RoomService } from './services/room.service';
+import { CustomDateParserFormatter } from './helpers/custom-date-parser-formatter';
 
 @NgModule({
   declarations: [
@@ -15,10 +22,21 @@ import { HotelFormComponent } from './components/hotel-form/hotel-form.component
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
+    NgbDatepickerModule,
+    NgbAlertModule,
+    RoomListComponent,
+    BookingFormComponent
   ],
-  providers: [],
+  providers: [
+    HotelService,
+    RoomService,
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

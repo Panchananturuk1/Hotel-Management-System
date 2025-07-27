@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class HotelService {
-  private baseUrl = 'http://localhost:8080/api/hotels';
+  // Update this URL to your EC2 public IP and port
+  private baseUrl = 'http://52.66.135.123:8080/api/hotels';
 
   constructor(private http: HttpClient) {}
 

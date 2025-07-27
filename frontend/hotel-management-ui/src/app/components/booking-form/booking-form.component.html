@@ -1,0 +1,141 @@
+<div class="booking-form-container">
+  <h2>Book Room {{ room.number }} - {{ room.type }}</h2>
+  
+  <div class="room-details">
+    <div class="detail-row">
+      <span class="label">Room Type:</span>
+      <span class="value">{{ room.type }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Price:</span>
+      <span class="value price">₹{{ room.price | number:'1.2-2' }} <span class="per-night">/ night</span></span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Max Occupancy:</span>
+      <span class="value">{{ room.maxOccupancy }} guests</span>
+    </div>
+  </div>
+
+  <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
+    <!-- Check-in Date -->
+    <div class="form-group">
+      <label for="checkIn">Check-in Date</label>
+      <input 
+        type="date" 
+        id="checkIn" 
+        formControlName="checkIn" 
+        [min]="minDate"
+        [max]="maxDate"
+        [class.invalid]="bookingForm.get('checkIn')?.invalid && bookingForm.get('checkIn')?.touched"
+      >
+      <div *ngIf="bookingForm.get('checkIn')?.errors?.['required'] && bookingForm.get('checkIn')?.touched" class="error-message">
+        Check-in date is required
+      </div>
+    </div>
+
+    <!-- Check-out Date -->
+    <div class="form-group">
+      <label for="checkOut">Check-out Date</label>
+      <input 
+        type="date" 
+        id="checkOut" 
+        formControlName="checkOut" 
+        [min]="minDate"
+        [max]="maxDate"
+        [class.invalid]="bookingForm.get('checkOut')?.invalid && bookingForm.get('checkOut')?.touched"
+      >
+      <div *ngIf="bookingForm.get('checkOut')?.errors?.['required'] && bookingForm.get('checkOut')?.touched" class="error-message">
+        Check-out date is required
+      </div>
+    </div>
+
+    <!-- Guest Count -->
+    <div class="form-group">
+      <label for="guestCount">Number of Guests</label>
+      <input 
+        type="number" 
+        id="guestCount" 
+        formControlName="guestCount" 
+        min="1" 
+        [max]="room.maxOccupancy || 4"
+        [class.invalid]="bookingForm.get('guestCount')?.invalid && bookingForm.get('guestCount')?.touched"
+      >
+      <div *ngIf="bookingForm.get('guestCount')?.errors?.['required'] && bookingForm.get('guestCount')?.touched" class="error-message">
+        Number of guests is required
+      </div>
+      <div *ngIf="bookingForm.get('guestCount')?.errors?.['max']" class="error-message">
+        Maximum {{ room.maxOccupancy || 4 }} guests allowed
+      </div>
+    </div>
+
+    <!-- Customer Name -->
+    <div class="form-group">
+      <label for="customerName">Your Name</label>
+      <input 
+        type="text" 
+        id="customerName" 
+        formControlName="customerName"
+        [class.invalid]="bookingForm.get('customerName')?.invalid && bookingForm.get('customerName')?.touched"
+      >
+      <div *ngIf="bookingForm.get('customerName')?.errors?.['required'] && bookingForm.get('customerName')?.touched" class="error-message">
+        Name is required
+      </div>
+      <div *ngIf="bookingForm.get('customerName')?.errors?.['minlength']" class="error-message">
+        Name must be at least 3 characters
+      </div>
+    </div>
+
+    <!-- Customer Email -->
+    <div class="form-group">
+      <label for="customerEmail">Email Address</label>
+      <input 
+        type="email" 
+        id="customerEmail" 
+        formControlName="customerEmail"
+        [class.invalid]="bookingForm.get('customerEmail')?.invalid && bookingForm.get('customerEmail')?.touched"
+      >
+      <div *ngIf="bookingForm.get('customerEmail')?.errors?.['required'] && bookingForm.get('customerEmail')?.touched" class="error-message">
+        Email is required
+      </div>
+      <div *ngIf="bookingForm.get('customerEmail')?.errors?.['email']" class="error-message">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <!-- Special Requests -->
+    <div class="form-group">
+      <label for="specialRequests">Special Requests (Optional)</label>
+      <textarea 
+        id="specialRequests" 
+        formControlName="specialRequests" 
+        rows="3"
+        placeholder="Any special requirements or requests..."
+      ></textarea>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message server-error">
+      {{ error }}
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-cancel"
+        (click)="onCancel()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="bookingForm.invalid || isSubmitting"
+      >
+        <span *ngIf="!isSubmitting">Book Now</span>
+        <span *ngIf="isSubmitting" class="spinner"></span>
+      </button>
+    </div>
+  </form>
+</div>

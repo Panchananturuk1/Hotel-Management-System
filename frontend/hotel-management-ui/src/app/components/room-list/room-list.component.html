@@ -1,0 +1,80 @@
+<div class="room-list">
+  <div class="room-list-container">
+    <div class="room-list-header">
+      <h2>{{ hotelName }} - Available Rooms</h2>
+      <p class="hotel-location" *ngIf="hotelName">
+        <i class="bi bi-geo-alt"></i> {{ getHotelLocation() }}
+      </p>
+    </div>
+    
+    <!-- Room Filters -->
+    <div class="filters">
+      <input 
+        type="text" 
+        [ngModel]="searchTerm" 
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Search rooms..."
+        class="form-control mb-3"
+      >
+      
+      <select 
+        [ngModel]="selectedType" 
+        (ngModelChange)="onTypeChange($event)"
+        class="form-select mb-3"
+      >
+        <option *ngFor="let type of roomTypes" [ngValue]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+    </div>
+    
+    <!-- Room List -->
+    <div class="rooms-container">
+      <div *ngFor="let room of filteredRooms" class="room-card">
+        <div class="room-details">
+          <h3>Room {{ room.number }} - {{ room.type | titlecase }}</h3>
+          <div class="price">
+            <span class="amount">{{ formatPrice(room.price) }}</span>
+            <span class="period">/ night</span>
+          </div>
+          
+          <div class="room-features">
+            <span class="feature" *ngIf="room.type === 'SINGLE' || room.type === 'DOUBLE'">
+              {{ room.type === 'SINGLE' ? '1' : '2' }} Guest
+            </span>
+            <span class="feature" *ngIf="room.type === 'DELUXE' || room.type === 'SUITE'">
+              {{ room.type === 'DELUXE' ? '2' : '4' }} Guests
+            </span>
+            <span class="feature">Free WiFi</span>
+            <span class="feature">{{ room.type === 'SUITE' ? 'Balcony' : 'Window' }}</span>
+          </div>
+        </div>
+        
+        <div class="room-actions">
+          <button class="btn view-btn" (click)="viewRoomDetails(room)">
+            View Details
+          </button>
+          <button 
+            class="btn book-btn" 
+            [disabled]="!room.isAvailable"
+            (click)="bookRoom(room)"
+          >
+            {{ room.isAvailable ? 'Book Now' : 'Not Available' }}
+          </button>
+        </div>
+        
+        <div *ngIf="!room.isAvailable" class="booked-overlay">
+          <span>Booked</span>
+        </div>
+      </div>
+      
+      <div *ngIf="filteredRooms.length === 0 && !isLoading" class="no-rooms">
+        No rooms available matching your criteria.
+      </div>
+      
+      <div *ngIf="isLoading" class="loading">
+        Loading rooms...
+      </div>
+    </div>
+  </div>
+</div>

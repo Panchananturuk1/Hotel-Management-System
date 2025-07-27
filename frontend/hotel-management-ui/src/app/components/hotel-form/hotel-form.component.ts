@@ -9,12 +9,17 @@ import { Hotel } from '../../models/hotel';
   styleUrls: ['./hotel-form.component.css']
 })
 export class HotelFormComponent {
-  hotel: Hotel = { name: '', location: '' };
+  hotel: Hotel = { name: '', location: '', rating: 0 };
+  hoverRating = 0;
   @Output() refresh = new EventEmitter<void>();
   isSubmitting = false;
   error: string | null = null;
 
   constructor(private hotelService: HotelService) {}
+
+  setRating(rating: number): void {
+    this.hotel.rating = rating;
+  }
 
   submit(): void {
     if (this.isSubmitting) return;
@@ -24,7 +29,7 @@ export class HotelFormComponent {
     
     this.hotelService.createHotel(this.hotel).subscribe({
       next: () => {
-        this.hotel = { name: '', location: '' };
+        this.hotel = { name: '', location: '', rating: 0 };
         this.refresh.emit();
       },
       error: (err) => {

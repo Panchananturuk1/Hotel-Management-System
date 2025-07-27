@@ -32,6 +32,39 @@
       Location is required
     </div>
   </div>
+
+  <div class="form-group">
+    <label for="rating">Rating</label>
+    <div class="rating-input">
+      <div class="star-rating">
+        <span *ngFor="let star of [1,2,3,4,5]" 
+              (click)="setRating(star)" 
+              [class.active]="star <= (hoverRating || hotel.rating)"
+              (mouseenter)="hoverRating = star"
+              (mouseleave)="hoverRating = 0"
+              [title]="star + ' star' + (star > 1 ? 's' : '')">
+          ★
+        </span>
+      </div>
+      <input type="number" 
+             id="rating"
+             name="rating"
+             [(ngModel)]="hotel.rating" 
+             min="1" 
+             max="5" 
+             step="0.1"
+             required
+             #rating="ngModel"
+             [class.is-invalid]="rating.invalid && (rating.dirty || rating.touched)"
+             class="rating-numeric">
+      <div *ngIf="rating.invalid && (rating.dirty || rating.touched)" class="error-message">
+        Please select a rating between 1 and 5
+      </div>
+    </div>
+    <div *ngIf="location.invalid && (location.dirty || location.touched)" class="error-message">
+      Location is required
+    </div>
+  </div>
   
   <div class="form-actions">
     <button 

@@ -1,0 +1,15 @@
+{
+  "IndexDocument": {
+    "Suffix": "index.html"
+  },
+  "RoutingRules": [
+    {
+      "Condition": {
+        "KeyPrefixEquals": ""
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "hotels"
+      }
+    }
+  ]
+}

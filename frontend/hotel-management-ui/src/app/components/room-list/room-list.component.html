@@ -1,80 +1,434 @@
-<div class="room-list">
-  <div class="room-list-container">
-    <div class="room-list-header">
-      <h2>{{ hotelName }} - Available Rooms</h2>
+<div class="room-list-section">
+  <div class="room-list-header">
+    <div class="hotel-info">
+      <h2><i class="bi bi-door-open"></i> {{ hotelName }} - Available Rooms</h2>
       <p class="hotel-location" *ngIf="hotelName">
-        <i class="bi bi-geo-alt"></i> {{ getHotelLocation() }}
+        <i class="bi bi-geo-alt-fill"></i> {{ getHotelLocation() }}
       </p>
     </div>
     
     <!-- Room Filters -->
-    <div class="filters">
-      <input 
-        type="text" 
-        [ngModel]="searchTerm" 
-        (ngModelChange)="onSearchChange($event)"
-        placeholder="Search rooms..."
-        class="form-control mb-3"
-      >
+    <div class="room-filters">
+      <div class="search-input">
+        <i class="bi bi-search"></i>
+        <input 
+          type="text" 
+          [ngModel]="searchTerm" 
+          (ngModelChange)="onSearchChange($event)"
+          placeholder="Search rooms..."
+        >
+      </div>
       
-      <select 
-        [ngModel]="selectedType" 
-        (ngModelChange)="onTypeChange($event)"
-        class="form-select mb-3"
-      >
-        <option *ngFor="let type of roomTypes" [ngValue]="type.value">
-          {{ type.label }}
-        </option>
-      </select>
+      <div class="filter-dropdown">
+        <i class="bi bi-funnel"></i>
+        <select 
+          [ngModel]="selectedType" 
+          (ngModelChange)="onTypeChange($event)"
+        >
+          <option *ngFor="let type of roomTypes" [ngValue]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
     </div>
-    
-    <!-- Room List -->
-    <div class="rooms-container">
-      <div *ngFor="let room of filteredRooms" class="room-card">
-        <div class="room-details">
-          <h3>Room {{ room.number }} - {{ room.type | titlecase }}</h3>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading available rooms...</p>
+  </div>
+  
+  <!-- No Rooms Message -->
+  <div *ngIf="filteredRooms.length === 0 && !isLoading" class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    <p>No rooms available matching your criteria.</p>
+  </div>
+  
+  <!-- Room List -->
+  <div *ngIf="!isLoading && filteredRooms.length > 0" class="rooms-grid">
+    <div *ngFor="let room of filteredRooms" class="room-card">
+      <div class="room-image">
+        <img [src]="room.images && room.images.length > 0 ? room.images[0] : 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'" alt="Room {{ room.number }}">
+        <div class="room-type-badge" [ngClass]="room.type.toLowerCase()">
+          {{ room.type | titlecase }}
+        </div>
+      </div>
+      
+      <div class="room-content">
+        <div class="room-header">
+          <h3>Room {{ room.number }}</h3>
           <div class="price">
             <span class="amount">{{ formatPrice(room.price) }}</span>
             <span class="period">/ night</span>
           </div>
-          
-          <div class="room-features">
-            <span class="feature" *ngIf="room.type === 'SINGLE' || room.type === 'DOUBLE'">
-              {{ room.type === 'SINGLE' ? '1' : '2' }} Guest
+        </div>
+        
+        <div class="room-amenities">
+          <div class="amenity">
+            <i class="bi bi-people"></i>
+            <span>
+              {{ room.type === 'SINGLE' ? '1' : room.type === 'DOUBLE' ? '2' : room.type === 'DELUXE' ? '2' : '4' }} 
+              {{ (room.type === 'SINGLE' ? '1' : room.type === 'DOUBLE' ? '2' : room.type === 'DELUXE' ? '2' : '4') === '1' ? 'Guest' : 'Guests' }}
             </span>
-            <span class="feature" *ngIf="room.type === 'DELUXE' || room.type === 'SUITE'">
-              {{ room.type === 'DELUXE' ? '2' : '4' }} Guests
-            </span>
-            <span class="feature">Free WiFi</span>
-            <span class="feature">{{ room.type === 'SUITE' ? 'Balcony' : 'Window' }}</span>
+          </div>
+          <div class="amenity">
+            <i class="bi bi-wifi"></i>
+            <span>Free WiFi</span>
+          </div>
+          <div class="amenity">
+            <i class="bi bi-{{ room.type === 'SUITE' ? 'door-open' : 'window' }}"></i>
+            <span>{{ room.type === 'SUITE' ? 'Balcony' : 'Window' }}</span>
+          </div>
+          <div class="amenity">
+            <i class="bi bi-droplet"></i>
+            <span>{{ room.type === 'DELUXE' || room.type === 'SUITE' ? 'Bathtub' : 'Shower' }}</span>
           </div>
         </div>
         
         <div class="room-actions">
-          <button class="btn view-btn" (click)="viewRoomDetails(room)">
-            View Details
+          <button class="btn btn-outline" (click)="viewRoomDetails(room)">
+            <i class="bi bi-info-circle"></i> Details
           </button>
           <button 
-            class="btn book-btn" 
+            class="btn" 
+            [ngClass]="room.isAvailable ? 'btn-primary' : 'btn-disabled'"
             [disabled]="!room.isAvailable"
             (click)="bookRoom(room)"
           >
+            <i class="bi" [ngClass]="room.isAvailable ? 'bi-calendar-check' : 'bi-calendar-x'"></i>
             {{ room.isAvailable ? 'Book Now' : 'Not Available' }}
           </button>
         </div>
-        
-        <div *ngIf="!room.isAvailable" class="booked-overlay">
-          <span>Booked</span>
+      </div>
+      
+      <div *ngIf="!room.isAvailable" class="booked-overlay">
+        <div class="booked-badge">
+          <i class="bi bi-calendar-x"></i> Booked
         </div>
-      </div>
-      
-      <div *ngIf="filteredRooms.length === 0 && !isLoading" class="no-rooms">
-        No rooms available matching your criteria.
-      </div>
-      
-      <div *ngIf="isLoading" class="loading">
-        Loading rooms...
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .room-list-section {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Header */
+  .room-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .hotel-info h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+  
+  .hotel-info h2 i {
+    color: #3498db;
+  }
+  
+  .hotel-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    margin: 0;
+  }
+  
+  /* Filters */
+  .room-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .search-input, .filter-dropdown {
+    position: relative;
+  }
+  
+  .search-input i, .filter-dropdown i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+  
+  .search-input input, .filter-dropdown select {
+    padding: 0.75rem 0.75rem 0.75rem 2rem;
+    border-radius: 20px;
+    border: 1px solid #ced4da;
+    min-width: 200px;
+    font-size: 0.875rem;
+  }
+  
+  /* Loading */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    text-align: center;
+  }
+  
+  .loading-container .spinner {
+    margin-bottom: 1rem;
+  }
+  
+  /* Alert */
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .alert i {
+    font-size: 1.5rem;
+  }
+  
+  .alert p {
+    margin: 0;
+  }
+  
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+  }
+  
+  /* Rooms Grid */
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Room Card */
+  .room-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .room-image {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+  }
+  
+  .room-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .room-card:hover .room-image img {
+    transform: scale(1.05);
+  }
+  
+  .room-type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: white;
+  }
+  
+  .room-type-badge.single {
+    background-color: #3498db;
+  }
+  
+  .room-type-badge.double {
+    background-color: #2ecc71;
+  }
+  
+  .room-type-badge.deluxe {
+    background-color: #9b59b6;
+  }
+  
+  .room-type-badge.suite {
+    background-color: #e74c3c;
+  }
+  
+  .room-content {
+    padding: 1.5rem;
+  }
+  
+  .room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .room-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2c3e50;
+  }
+  
+  .price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .price .amount {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .price .period {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+  
+  .room-amenities {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .amenity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+  }
+  
+  .amenity i {
+    color: #3498db;
+    font-size: 1rem;
+  }
+  
+  .room-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+  
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    flex: 1;
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid #3498db;
+    color: #3498db;
+  }
+  
+  .btn-outline:hover {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-primary {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2980b9;
+  }
+  
+  .btn-disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+  
+  /* Booked Overlay */
+  .booked-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .booked-badge {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transform: rotate(-15deg);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .room-list-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .room-filters {
+      flex-direction: column;
+    }
+    
+    .search-input, .filter-dropdown {
+      width: 100%;
+    }
+    
+    .search-input input, .filter-dropdown select {
+      width: 100%;
+    }
+    
+    .rooms-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

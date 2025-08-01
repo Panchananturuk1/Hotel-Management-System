@@ -1,141 +1,369 @@
-<div class="hotel-list">
-  <header class="header">
-    <h2>Hotel Listings</h2>
-    <div class="search-bar">
-      <input type="text" placeholder="Search hotels..." (input)="filterHotels($event)">
-      <select (change)="filterByRating($event)">
-        <option value="">All Ratings</option>
-        <option value="4.5">4.5+</option>
-        <option value="4.0">4.0+</option>
-        <option value="3.5">3.5+</option>
-      </select>
+<div class="hotel-list-container">
+  <div class="section-header">
+    <div class="section-title">
+      <h2><i class="bi bi-buildings"></i> Hotel Listings</h2>
+      <p class="text-muted">Manage and browse your hotel properties</p>
     </div>
-  </header>
-
-  <!-- Add Hotel Form -->
-  <div class="card add-hotel">
-    <h3>Add New Hotel</h3>
-    <app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
+    
+    <div class="search-filters">
+      <div class="search-input">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search hotels..." (input)="filterHotels($event)">
+      </div>
+      
+      <div class="filter-dropdown">
+        <i class="bi bi-star-fill"></i>
+        <select (change)="filterByRating($event)">
+          <option value="">All Ratings</option>
+          <option value="4.5">4.5+</option>
+          <option value="4.0">4.0+</option>
+          <option value="3.5">3.5+</option>
+        </select>
+      </div>
+    </div>
   </div>
 
+
   <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading">
+  <div *ngIf="isLoading" class="loading-container">
     <div class="spinner"></div>
     <p>Loading hotels...</p>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error" class="error">
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle"></i>
     <p>{{ error }}</p>
-    <button (click)="loadHotels()">Retry</button>
+    <button class="btn btn-danger" (click)="loadHotels()">
+      <i class="bi bi-arrow-clockwise"></i> Retry
+    </button>
   </div>
 
   <!-- Hotels List -->
-  <div *ngIf="!isLoading && !error">
-    <div *ngIf="filteredHotels.length === 0" class="no-hotels">
+  <div *ngIf="!isLoading && !error" class="hotels-container">
+    <div *ngIf="filteredHotels.length === 0" class="alert alert-info">
+      <i class="bi bi-info-circle"></i>
       <p>No hotels found matching your criteria.</p>
     </div>
 
     <div class="hotels-grid">
-      <div *ngFor="let hotel of filteredHotels" class="hotel-card">
-        <div class="hotel-header">
-          <h3>{{ hotel.name }}</h3>
-          <div class="rating">
+      <div *ngFor="let hotel of filteredHotels" class="hotel-card card">
+        <div class="hotel-image">
+          <img [src]="hotel.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'" alt="{{ hotel.name }}">
+          <div class="hotel-rating">
             <span class="stars">{{ getStarRating(hotel.rating) }}</span>
             <span class="rating-value">{{ hotel.rating }}/5.0</span>
           </div>
         </div>
-        <div class="hotel-body">
-          <p class="location">📍 {{ hotel.location }}</p>
-          
-          <!-- Show rooms for the selected hotel -->
-          <div class="rooms-section" *ngIf="selectedHotelId === hotel.id">
-            <app-room-list 
-              [hotelId]="hotel.id!" 
-              [hotelName]="hotel.name">
-            </app-room-list>
+        
+        <div class="hotel-content">
+          <div class="hotel-header">
+            <h3>{{ hotel.name }}</h3>
+            <button class="delete-btn" (click)="deleteHotel(hotel.id!)" title="Delete Hotel">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
           
-          <div class="actions">
+          <p class="hotel-location">
+            <i class="bi bi-geo-alt-fill"></i> {{ hotel.location }}
+          </p>
+          
+          <p class="hotel-description">
+            {{ hotel.description || 'A luxurious hotel offering premium amenities and exceptional service for an unforgettable stay experience.' }}
+          </p>
+          
+          <div class="hotel-amenities">
+            <span class="amenity"><i class="bi bi-wifi"></i> Free WiFi</span>
+            <span class="amenity"><i class="bi bi-p-circle"></i> Parking</span>
+            <span class="amenity"><i class="bi bi-cup-hot"></i> Breakfast</span>
+          </div>
+          
+          <div class="hotel-actions">
             <button 
-              class="btn view-btn" 
+              class="btn btn-primary" 
               (click)="toggleRooms(hotel.id!)"
             >
+              <i class="bi" [ngClass]="selectedHotelId === hotel.id ? 'bi-eye-slash' : 'bi-eye'"></i>
               {{ selectedHotelId === hotel.id ? 'Hide Rooms' : 'View Rooms' }}
             </button>
           </div>
         </div>
-        <button class="delete-btn" (click)="deleteHotel(hotel.id!)" title="Delete Hotel">
-          <i class="fas fa-trash"></i>
-        </button>
+        
+        <!-- Show rooms for the selected hotel -->
+        <div class="rooms-section" *ngIf="selectedHotelId === hotel.id">
+          <app-room-list 
+            [hotelId]="hotel.id!" 
+            [hotelName]="hotel.name">
+          </app-room-list>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-  .hotel-list {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+  /* Hotel List Container */
+  .hotel-list-container {
+    width: 100%;
   }
   
-  .card {
-    background: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .hotels {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .hotel-item {
+  /* Section Header */
+  .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    margin-bottom: 10px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
   
-  .hotel-info {
+  .section-title h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .section-title p {
+    margin: 0;
+  }
+  
+  .search-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .search-input, .filter-dropdown {
+    position: relative;
+  }
+  
+  .search-input i, .filter-dropdown i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+  
+  .search-input input, .filter-dropdown select {
+    padding-left: 35px;
+    min-width: 200px;
+    border-radius: 20px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+  }
+  
+  /* Add Hotel Card */
+  .add-hotel-card {
+    margin-bottom: 2rem;
+    border: none;
+    border-radius: 0.5rem;
+  }
+  
+  .card-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+    background: none;
+    border-bottom: none;
+  }
+  
+  .card-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  /* Loading and Error States */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .loading-container .spinner {
+    margin-bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+    border-width: 3px;
+  }
+  
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .alert i {
+    font-size: 1.5rem;
+  }
+  
+  .alert p {
+    margin: 0;
     flex-grow: 1;
   }
   
-  .delete-btn {
-    background: #ff4444;
-    color: white;
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+  }
+  
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+  }
+  
+  /* Hotels Grid */
+  .hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+  
+  /* Hotel Card */
+  .hotel-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+  }
+  
+  .hotel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hotel-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+  
+  .hotel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .hotel-card:hover .hotel-image img {
+    transform: scale(1.05);
+  }
+  
+  .hotel-rating {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .stars {
+    color: #ffc107;
+  }
+  
+  .hotel-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .hotel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+  }
+  
+  .hotel-location {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .hotel-description {
+    margin-bottom: 1rem;
+    color: #495057;
+    line-height: 1.6;
+  }
+  
+  .hotel-amenities {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .amenity {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+  }
+  
+  .hotel-actions {
+    margin-top: auto;
+  }
+  
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.25rem;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: color 0.3s;
+    padding: 0.25rem;
   }
   
   .delete-btn:hover {
-    background: #cc0000;
+    color: #c0392b;
   }
   
-  .loading, .error, .no-hotels {
-    text-align: center;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
+  /* Rooms Section */
+  .rooms-section {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
   }
   
-  .error {
-    background: #ffebee;
-    color: #c62828;
-  }
-  
-  .no-hotels {
-    background: #e3f2fd;
-    color: #1565c0;
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .hotels-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

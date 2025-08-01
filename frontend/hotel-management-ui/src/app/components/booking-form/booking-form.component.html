@@ -1,141 +1,511 @@
 <div class="booking-form-container">
-  <h2>Book Room {{ room.number }} - {{ room.type }}</h2>
-  
-  <div class="room-details">
-    <div class="detail-row">
-      <span class="label">Room Type:</span>
-      <span class="value">{{ room.type }}</span>
+  <div *ngIf="room" class="room-details">
+    <div class="room-header">
+      <h3><i class="bi bi-calendar-check"></i> Book Room {{ room.number }}</h3>
+      <div class="room-badges">
+        <span class="badge" [ngClass]="'badge-' + room.type.toLowerCase()">{{ room.type | titlecase }}</span>
+        <span class="badge badge-price">{{ formatPrice(room.price) }} / night</span>
+      </div>
     </div>
-    <div class="detail-row">
-      <span class="label">Price:</span>
-      <span class="value price">₹{{ room.price | number:'1.2-2' }} <span class="per-night">/ night</span></span>
-    </div>
-    <div class="detail-row">
-      <span class="label">Max Occupancy:</span>
-      <span class="value">{{ room.maxOccupancy }} guests</span>
+    <div class="room-info">
+      <div class="info-item">
+        <i class="bi bi-people-fill"></i>
+        <span>Max Occupancy: <strong>{{ getMaxOccupancy() }} guests</strong></span>
+      </div>
+      <div class="info-item">
+        <i class="bi bi-house-door"></i>
+        <span>Room Type: <strong>{{ room.type | titlecase }}</strong></span>
+      </div>
     </div>
   </div>
-
+  
   <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
-    <!-- Check-in Date -->
-    <div class="form-group">
-      <label for="checkIn">Check-in Date</label>
-      <input 
-        type="date" 
-        id="checkIn" 
-        formControlName="checkIn" 
-        [min]="minDate"
-        [max]="maxDate"
-        [class.invalid]="bookingForm.get('checkIn')?.invalid && bookingForm.get('checkIn')?.touched"
-      >
-      <div *ngIf="bookingForm.get('checkIn')?.errors?.['required'] && bookingForm.get('checkIn')?.touched" class="error-message">
-        Check-in date is required
+    <div class="form-section">
+      <h4><i class="bi bi-calendar-week"></i> Booking Dates</h4>
+      
+      <div class="form-row">
+        <!-- Check-in Date -->
+        <div class="form-group">
+          <label for="checkInDate">
+            <i class="bi bi-calendar-check"></i> Check-in Date <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar-plus"></i></span>
+            <input
+              id="checkInDate"
+              class="form-control"
+              placeholder="yyyy-mm-dd"
+              name="checkInDate"
+              formControlName="checkInDate"
+              [class.is-invalid]="checkInDateControl.invalid && checkInDateControl.touched"
+              ngbDatepicker
+              #checkInDatePicker="ngbDatepicker"
+              [minDate]="minDate"
+              [maxDate]="maxDate"
+            >
+            <button class="btn btn-calendar" (click)="checkInDatePicker.toggle()" type="button">
+              <i class="bi bi-calendar"></i>
+            </button>
+          </div>
+          <div *ngIf="checkInDateControl.invalid && checkInDateControl.touched" class="error-message">
+            <i class="bi bi-exclamation-circle"></i>
+            <small *ngIf="checkInDateControl.errors?.['required']">Check-in date is required</small>
+          </div>
+        </div>
+        
+        <!-- Check-out Date -->
+        <div class="form-group">
+          <label for="checkOutDate">
+            <i class="bi bi-calendar-x"></i> Check-out Date <span class="required">*</span>
+          </label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar-minus"></i></span>
+            <input
+              id="checkOutDate"
+              class="form-control"
+              placeholder="yyyy-mm-dd"
+              name="checkOutDate"
+              formControlName="checkOutDate"
+              [class.is-invalid]="checkOutDateControl.invalid && checkOutDateControl.touched"
+              ngbDatepicker
+              #checkOutDatePicker="ngbDatepicker"
+              [minDate]="getMinCheckoutDate()"
+              [maxDate]="getMaxCheckoutDate()"
+            >
+            <button class="btn btn-calendar" (click)="checkOutDatePicker.toggle()" type="button">
+              <i class="bi bi-calendar"></i>
+            </button>
+          </div>
+          <div *ngIf="checkOutDateControl.invalid && checkOutDateControl.touched" class="error-message">
+            <i class="bi bi-exclamation-circle"></i>
+            <small *ngIf="checkOutDateControl.errors?.['required']">Check-out date is required</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Number of Guests -->
+      <div class="form-group">
+        <label for="guestCount">Number of Guests <span class="required">*</span></label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-people"></i></span>
+          <input 
+            type="number" 
+            id="guestCount" 
+            formControlName="guestCount" 
+            class="form-control"
+            min="1"
+            [max]="getMaxOccupancy()"
+          >
+        </div>
+        <div *ngIf="guestCountControl.invalid && (guestCountControl.dirty || guestCountControl.touched)" class="error-message">
+          <i class="bi bi-exclamation-circle"></i>
+          <span *ngIf="guestCountControl.errors?.['required']">Number of guests is required</span>
+          <span *ngIf="guestCountControl.errors?.['min']">At least 1 guest is required</span>
+          <span *ngIf="guestCountControl.errors?.['max']">Maximum {{ getMaxOccupancy() }} guests allowed</span>
+        </div>
       </div>
     </div>
-
-    <!-- Check-out Date -->
-    <div class="form-group">
-      <label for="checkOut">Check-out Date</label>
-      <input 
-        type="date" 
-        id="checkOut" 
-        formControlName="checkOut" 
-        [min]="minDate"
-        [max]="maxDate"
-        [class.invalid]="bookingForm.get('checkOut')?.invalid && bookingForm.get('checkOut')?.touched"
-      >
-      <div *ngIf="bookingForm.get('checkOut')?.errors?.['required'] && bookingForm.get('checkOut')?.touched" class="error-message">
-        Check-out date is required
+    
+    <div class="form-section">
+      <h4><i class="bi bi-person-vcard"></i> Guest Information</h4>
+      
+      <div class="form-row">
+        <!-- Customer Name -->
+        <div class="form-group">
+          <label for="customerName">Your Name <span class="required">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input 
+              type="text" 
+              id="customerName" 
+              formControlName="customerName" 
+              class="form-control"
+              placeholder="Enter your full name"
+            >
+          </div>
+          <div *ngIf="customerNameControl.invalid && (customerNameControl.dirty || customerNameControl.touched)" class="error-message">
+            <i class="bi bi-exclamation-circle"></i>
+            <span *ngIf="customerNameControl.errors?.['required']">Your name is required</span>
+            <span *ngIf="customerNameControl.errors?.['minlength']">Name must be at least 3 characters</span>
+          </div>
+        </div>
+        
+        <!-- Customer Email -->
+        <div class="form-group">
+          <label for="customerEmail">Your Email <span class="required">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input 
+              type="email" 
+              id="customerEmail" 
+              formControlName="customerEmail" 
+              class="form-control"
+              placeholder="Enter your email address"
+            >
+          </div>
+          <div *ngIf="customerEmailControl.invalid && (customerEmailControl.dirty || customerEmailControl.touched)" class="error-message">
+            <i class="bi bi-exclamation-circle"></i>
+            <span *ngIf="customerEmailControl.errors?.['required']">Your email is required</span>
+            <span *ngIf="customerEmailControl.errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Special Requests -->
+      <div class="form-group">
+        <label for="specialRequests">Special Requests (Optional)</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+          <textarea 
+            id="specialRequests" 
+            formControlName="specialRequests" 
+            class="form-control"
+            rows="3"
+            placeholder="Any special requirements or requests?"
+          ></textarea>
+        </div>
       </div>
     </div>
-
-    <!-- Guest Count -->
-    <div class="form-group">
-      <label for="guestCount">Number of Guests</label>
-      <input 
-        type="number" 
-        id="guestCount" 
-        formControlName="guestCount" 
-        min="1" 
-        [max]="room.maxOccupancy || 4"
-        [class.invalid]="bookingForm.get('guestCount')?.invalid && bookingForm.get('guestCount')?.touched"
-      >
-      <div *ngIf="bookingForm.get('guestCount')?.errors?.['required'] && bookingForm.get('guestCount')?.touched" class="error-message">
-        Number of guests is required
+    
+    <!-- Booking Summary -->
+    <div class="booking-summary">
+      <h4><i class="bi bi-receipt"></i> Booking Summary</h4>
+      <div class="summary-item">
+        <span>Room Type:</span>
+        <span>{{ room.type | titlecase }}</span>
       </div>
-      <div *ngIf="bookingForm.get('guestCount')?.errors?.['max']" class="error-message">
-        Maximum {{ room.maxOccupancy || 4 }} guests allowed
+      <div class="summary-item">
+        <span>Price per Night:</span>
+        <span>{{ formatPrice(room.price) }}</span>
       </div>
-    </div>
-
-    <!-- Customer Name -->
-    <div class="form-group">
-      <label for="customerName">Your Name</label>
-      <input 
-        type="text" 
-        id="customerName" 
-        formControlName="customerName"
-        [class.invalid]="bookingForm.get('customerName')?.invalid && bookingForm.get('customerName')?.touched"
-      >
-      <div *ngIf="bookingForm.get('customerName')?.errors?.['required'] && bookingForm.get('customerName')?.touched" class="error-message">
-        Name is required
+      <div class="summary-item" *ngIf="calculateNights() > 0">
+        <span>Number of Nights:</span>
+        <span>{{ calculateNights() }}</span>
       </div>
-      <div *ngIf="bookingForm.get('customerName')?.errors?.['minlength']" class="error-message">
-        Name must be at least 3 characters
+      <div class="summary-item total" *ngIf="calculateNights() > 0">
+        <span>Total Amount:</span>
+        <span>{{ formatPrice(calculateTotal()) }}</span>
       </div>
     </div>
-
-    <!-- Customer Email -->
-    <div class="form-group">
-      <label for="customerEmail">Email Address</label>
-      <input 
-        type="email" 
-        id="customerEmail" 
-        formControlName="customerEmail"
-        [class.invalid]="bookingForm.get('customerEmail')?.invalid && bookingForm.get('customerEmail')?.touched"
-      >
-      <div *ngIf="bookingForm.get('customerEmail')?.errors?.['required'] && bookingForm.get('customerEmail')?.touched" class="error-message">
-        Email is required
-      </div>
-      <div *ngIf="bookingForm.get('customerEmail')?.errors?.['email']" class="error-message">
-        Please enter a valid email address
-      </div>
+    
+    <!-- Server Error -->
+    <div *ngIf="serverError" class="server-error-alert">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span>{{ serverError }}</span>
     </div>
-
-    <!-- Special Requests -->
-    <div class="form-group">
-      <label for="specialRequests">Special Requests (Optional)</label>
-      <textarea 
-        id="specialRequests" 
-        formControlName="specialRequests" 
-        rows="3"
-        placeholder="Any special requirements or requests..."
-      ></textarea>
-    </div>
-
-    <!-- Error Message -->
-    <div *ngIf="error" class="error-message server-error">
-      {{ error }}
-    </div>
-
+    
     <!-- Form Actions -->
     <div class="form-actions">
-      <button 
-        type="button" 
-        class="btn btn-cancel"
-        (click)="onCancel()"
-        [disabled]="isSubmitting"
-      >
-        Cancel
+      <button type="button" class="btn btn-outline" (click)="onCancel()">
+        <i class="bi bi-x-circle"></i> Cancel
       </button>
       <button 
         type="submit" 
-        class="btn btn-primary"
+        class="btn btn-primary" 
         [disabled]="bookingForm.invalid || isSubmitting"
       >
-        <span *ngIf="!isSubmitting">Book Now</span>
-        <span *ngIf="isSubmitting" class="spinner"></span>
+        <i *ngIf="!isSubmitting" class="bi bi-check-circle"></i>
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        {{ isSubmitting ? 'Processing...' : 'Confirm Booking' }}
       </button>
     </div>
   </form>
 </div>
+
+<style>
+  .booking-form-container {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Room Details */
+  .room-details {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .room-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .room-header h3 i {
+    color: #3498db;
+  }
+  
+  .room-badges {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+  }
+  
+  .badge-single {
+    background-color: #3498db;
+  }
+  
+  .badge-double {
+    background-color: #2ecc71;
+  }
+  
+  .badge-deluxe {
+    background-color: #9b59b6;
+  }
+  
+  .badge-suite {
+    background-color: #e74c3c;
+  }
+  
+  .badge-price {
+    background-color: #f39c12;
+  }
+  
+  .room-info {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+  }
+  
+  .info-item i {
+    color: #3498db;
+  }
+  
+  /* Form Sections */
+  .form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .form-section h4 {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .form-section h4 i {
+    color: #3498db;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Form Controls */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .required {
+    color: #e74c3c;
+  }
+  
+  .input-group {
+    display: flex;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-right: none;
+    color: #6c757d;
+  }
+  
+  .form-control {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0;
+    font-size: 1rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .form-control:focus {
+    border-color: #3498db;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .btn-calendar {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-left: none;
+    color: #6c757d;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+  }
+  
+  .btn-calendar:hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Error Messages */
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    color: #e74c3c;
+    font-size: 0.875rem;
+  }
+  
+  /* Booking Summary */
+  .booking-summary {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    color: #495057;
+  }
+  
+  .summary-item.total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed #ced4da;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2c3e50;
+  }
+  
+  /* Server Error */
+  .server-error-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    border-radius: 0.25rem;
+    border-left: 4px solid #dc3545;
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+  }
+  
+  .btn-outline:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .btn-primary {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2980b9;
+  }
+  
+  .btn-primary:disabled {
+    background-color: #a0d0f0;
+    cursor: not-allowed;
+  }
+  
+  .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.2em;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .booking-form-container {
+      padding: 1.5rem;
+    }
+    
+    .room-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>

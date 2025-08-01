@@ -1,40 +1,58 @@
 <form (ngSubmit)="submit()" #hotelForm="ngForm" class="hotel-form">
-  <div class="form-group">
-    <label for="name">Hotel Name</label>
-    <input 
-      type="text" 
-      id="name"
-      name="name" 
-      [(ngModel)]="hotel.name" 
-      placeholder="Enter hotel name" 
-      required
-      #name="ngModel"
-      [class.is-invalid]="name.invalid && (name.dirty || name.touched)"
-    >
-    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error-message">
-      Hotel name is required
+  <div class="form-row">
+    <div class="form-group">
+      <label for="name">
+        <i class="bi bi-building"></i> Hotel Name
+      </label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="name"
+          name="name" 
+          [(ngModel)]="hotel.name" 
+          placeholder="Enter hotel name" 
+          required
+          #name="ngModel"
+          [class.invalid]="name.invalid && (name.dirty || name.touched)"
+        >
+        <div class="input-icon" *ngIf="name.valid && name.dirty">
+          <i class="bi bi-check-circle-fill text-success"></i>
+        </div>
+      </div>
+      <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error-message">
+        <i class="bi bi-exclamation-circle"></i> Hotel name is required
+      </div>
     </div>
-  </div>
-  
-  <div class="form-group">
-    <label for="location">Location</label>
-    <input 
-      type="text" 
-      id="location"
-      name="location" 
-      [(ngModel)]="hotel.location" 
-      placeholder="Enter location" 
-      required
-      #location="ngModel"
-      [class.is-invalid]="location.invalid && (location.dirty || location.touched)"
-    >
-    <div *ngIf="location.invalid && (location.dirty || location.touched)" class="error-message">
-      Location is required
+    
+    <div class="form-group">
+      <label for="location">
+        <i class="bi bi-geo-alt"></i> Location
+      </label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="location"
+          name="location" 
+          [(ngModel)]="hotel.location" 
+          placeholder="Enter location" 
+          required
+          #location="ngModel"
+          [class.invalid]="location.invalid && (location.dirty || location.touched)"
+        >
+        <div class="input-icon" *ngIf="location.valid && location.dirty">
+          <i class="bi bi-check-circle-fill text-success"></i>
+        </div>
+      </div>
+      <div *ngIf="location.invalid && (location.dirty || location.touched)" class="error-message">
+        <i class="bi bi-exclamation-circle"></i> Location is required
+      </div>
     </div>
   </div>
 
   <div class="form-group">
-    <label for="rating">Rating</label>
+    <label for="rating">
+      <i class="bi bi-star"></i> Rating
+    </label>
     <div class="rating-input">
       <div class="star-rating">
         <span *ngFor="let star of [1,2,3,4,5]" 
@@ -43,7 +61,7 @@
               (mouseenter)="hoverRating = star"
               (mouseleave)="hoverRating = 0"
               [title]="star + ' star' + (star > 1 ? 's' : '')">
-          ★
+          <i class="bi bi-star-fill"></i>
         </span>
       </div>
       <input type="number" 
@@ -55,37 +73,63 @@
              step="0.1"
              required
              #rating="ngModel"
-             [class.is-invalid]="rating.invalid && (rating.dirty || rating.touched)"
+             [class.invalid]="rating.invalid && (rating.dirty || rating.touched)"
              class="rating-numeric">
       <div *ngIf="rating.invalid && (rating.dirty || rating.touched)" class="error-message">
-        Please select a rating between 1 and 5
+        <i class="bi bi-exclamation-circle"></i> Please select a rating between 1 and 5
       </div>
     </div>
-    <div *ngIf="location.invalid && (location.dirty || location.touched)" class="error-message">
-      Location is required
-    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="description">
+      <i class="bi bi-card-text"></i> Description (Optional)
+    </label>
+    <textarea 
+      id="description"
+      name="description" 
+      [(ngModel)]="hotel.description" 
+      placeholder="Enter a brief description of the hotel..."
+      rows="3"
+    ></textarea>
   </div>
   
   <div class="form-actions">
     <button 
-      type="submit" 
-      [disabled]="hotelForm.invalid || isSubmitting"
-      [class.loading]="isSubmitting"
+      type="button" 
+      class="btn btn-secondary"
+      (click)="hotel = {name: '', location: '', rating: 0}"
+      [disabled]="isSubmitting"
     >
+      <i class="bi bi-x-circle"></i> Reset
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-primary"
+      [disabled]="hotelForm.invalid || isSubmitting"
+    >
+      <i class="bi bi-plus-circle" *ngIf="!isSubmitting"></i>
       <span *ngIf="!isSubmitting">Add Hotel</span>
+      <span class="spinner" *ngIf="isSubmitting"></span>
       <span *ngIf="isSubmitting">Adding...</span>
     </button>
   </div>
   
-  <div *ngIf="error" class="error-message">
+  <div *ngIf="error" class="alert alert-danger mt-3">
+    <i class="bi bi-exclamation-triangle"></i>
     {{ error }}
   </div>
 </form>
 
 <style>
   .hotel-form {
-    max-width: 500px;
-    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
   }
   
   .form-group {
@@ -93,81 +137,167 @@
   }
   
   label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #333;
+    color: #2c3e50;
   }
   
-  input {
+  label i {
+    color: #3498db;
+  }
+  
+  .input-wrapper {
+    position: relative;
+  }
+  
+  .input-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .text-success {
+    color: #2ecc71;
+  }
+  
+  input, textarea, select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: border-color 0.3s;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
   }
   
-  input:focus {
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: #1976d2;
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
   }
   
-  input.is-invalid {
-    border-color: #c62828;
+  input.invalid, textarea.invalid, select.invalid {
+    border-color: #e74c3c;
   }
   
   .error-message {
-    color: #c62828;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #e74c3c;
     font-size: 0.875rem;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
   }
   
-  .form-actions {
-    margin-top: 1.5rem;
+  /* Star Rating */
+  .rating-input {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
   
-  button {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 1rem;
+  .star-rating {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .star-rating span {
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 1.5rem;
+    color: #ced4da;
+    transition: color 0.2s ease;
   }
   
-  button:hover:not(:disabled) {
-    background-color: #1565c0;
+  .star-rating span.active {
+    color: #ffc107;
   }
   
-  button:disabled {
-    background-color: #e0e0e0;
+  .rating-numeric {
+    width: 80px;
+    text-align: center;
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+  }
+  
+  .btn-primary {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background-color: #2980b9;
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .btn-secondary:hover:not(:disabled) {
+    background-color: #5a6268;
+  }
+  
+  .btn:disabled {
+    opacity: 0.65;
     cursor: not-allowed;
   }
   
-  button.loading {
-    position: relative;
-    color: transparent;
+  /* Alert */
+  .alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
   }
   
-  button.loading::after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    top: 50%;
-    left: 50%;
-    margin: -8px 0 0 -8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
   }
   
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
+  /* Responsive */
+  @media (max-width: 576px) {
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
   }
 </style>

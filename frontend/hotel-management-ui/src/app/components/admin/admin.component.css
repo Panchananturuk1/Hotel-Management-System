@@ -1,0 +1,94 @@
+.admin-panel {
+  margin-top: 20px;
+}
+
+.admin-sidebar {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  height: 100%;
+}
+
+.admin-sidebar h3 {
+  color: #3498db;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 10px;
+}
+
+.admin-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-menu li {
+  margin-bottom: 10px;
+}
+
+.admin-menu li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #555;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.admin-menu li a:hover {
+  background-color: #e9f5ff;
+  color: #3498db;
+}
+
+.admin-menu li.active a {
+  background-color: #3498db;
+  color: white;
+}
+
+.admin-menu li a i {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+.admin-content {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  min-height: 500px;
+}
+
+.add-hotel-card {
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.add-hotel-card .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eaeaea;
+  padding: 15px 20px;
+}
+
+.add-hotel-card .card-header h3 {
+  margin: 0;
+  color: #3498db;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.add-hotel-card .card-header h3 i {
+  margin-right: 10px;
+}
+
+.add-hotel-card .card-header p {
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+}
+
+.add-hotel-card .card-body {
+  padding: 20px;
+}

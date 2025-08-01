@@ -1,45 +1,55 @@
-<div class="container">
-  <header class="header">
-    <h1>Hotel Management System</h1>
+<div class="app-wrapper">
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <i class="bi bi-buildings"></i>
+          <h1>Hotel Management System</h1>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a routerLink="/hotels" routerLinkActive="active">Hotels</a></li>
+            <li><a routerLink="/rooms" routerLinkActive="active">Rooms</a></li>
+            <li><a routerLink="/bookings" routerLinkActive="active">Bookings</a></li>
+            <li><a routerLink="/admin" routerLinkActive="active" class="admin-link"><i class="bi bi-shield-lock"></i> Admin</a></li>
+            <li><a href="#">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </header>
   
-  <main>
-    <app-hotel-list></app-hotel-list>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h2>Welcome to Hotel Management System</h2>
+        <p>Manage your hotels, rooms, and bookings with our elegant and intuitive system</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
   </main>
+  
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <i class="bi bi-buildings"></i>
+          <span>Hotel Management System</span>
+        </div>
+        <div class="footer-copyright">
+          <p>&copy; 2023 Hotel Management System. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>
-
-<style>
-  :host {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  .header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 20px 0;
-    border-bottom: 1px solid #eee;
-  }
-
-  h1 {
-    color: #1976d2;
-    margin: 0 0 10px;
-  }
-</style>
 

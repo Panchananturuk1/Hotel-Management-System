@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HotelService } from '../../services/hotel.service';
 import { Hotel } from '../../models/hotel';
 import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hotel-list',
   templateUrl: './hotel-list.component.html',
   styleUrls: ['./hotel-list.component.css']
 })
-export class HotelListComponent implements OnInit {
+export class HotelListComponent implements OnInit, OnDestroy {
   hotels: Hotel[] = [];
   filteredHotels: Hotel[] = [];
   selectedHotelId: number | null = null;
@@ -19,11 +20,26 @@ export class HotelListComponent implements OnInit {
   
   // Track expanded state for each hotel
   expandedHotels: { [key: number]: boolean } = {};
+  
+  // Subscription to handle refresh events
+  private refreshSubscription: Subscription = new Subscription();
 
   constructor(private hotelService: HotelService) {}
 
   ngOnInit(): void {
     this.loadHotels();
+    
+    // Subscribe to refresh events from the hotel service
+    this.refreshSubscription = this.hotelService.refreshNeeded$.subscribe(() => {
+      this.loadHotels();
+    });
+  }
+  
+  ngOnDestroy(): void {
+    // Clean up subscription to prevent memory leaks
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 
   loadHotels(): void {

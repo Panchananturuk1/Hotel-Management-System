@@ -1,127 +1,136 @@
 # Hotel Management System
 
-A comprehensive Hotel Management System built with Java Spring Boot backend and Angular frontend. This application provides a complete solution for managing hotel operations including room bookings, guest management, and staff administration.
+A comprehensive hotel management application built with Angular frontend and Spring Boot backend. This system allows hotel administrators to manage hotels, rooms, and bookings through an intuitive user interface.
 
-## Features
+## Live Demo
 
-- **Room Management**: Add, update, and manage hotel rooms with different categories and pricing
-- **Booking System**: Handle room reservations and check-ins/check-outs
-- **Guest Management**: Maintain guest records and history
-- **Staff Management**: Administer staff accounts and roles
-- **Billing**: Generate invoices and process payments
-- **Reports**: View occupancy rates, revenue reports, and other analytics
+Access the live application at: [http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/hotels](http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/hotels)
 
-## Tech Stack
+## Project Overview
 
-### Backend
-- Java 11+
-- Spring Boot 2.7.x
-- Spring Data JPA
-- Hibernate
-- Maven
-- MySQL/PostgreSQL
+### Frontend (Angular)
+
+The frontend is built with Angular 16 and provides a responsive user interface for managing hotel operations.
+
+#### Key Features
+
+- **Hotel Management**: Add, edit, view, and delete hotels
+- **Room Management**: Manage different room types and their availability
+- **Booking System**: Create and manage room bookings
+- **Admin Dashboard**: Administrative interface for system management
+
+#### Components
+
+- **Hotel List**: Display and manage hotels
+- **Room List**: View and manage rooms for each hotel
+- **Booking Form**: Create and manage bookings
+- **Admin Panel**: Administrative controls and settings
+
+### Backend (Spring Boot)
+
+The backend API is built with Spring Boot and provides RESTful endpoints for the frontend to consume.
+
+#### API Endpoints
+
+- **Hotels API**: `http://52.66.135.123:8080/api/hotels`
+- **Rooms API**: `http://52.66.135.123:8080/api/rooms`
+- **Bookings API**: `http://52.66.135.123:8080/api/bookings`
+
+## Technology Stack
 
 ### Frontend
-- Angular 13+
-- TypeScript
-- Angular Material
-- RxJS
-- HTML5/CSS3
 
-## Prerequisites
+- **Framework**: Angular 16.2.12
+- **UI Components**: Bootstrap 5.3.2, ng-bootstrap 15.1.2
+- **HTTP Client**: Angular HttpClient
+- **State Management**: RxJS Observables
 
-- Java Development Kit (JDK) 11 or higher
-- Node.js (v14.x or higher)
-- Angular CLI (v13.x or higher)
-- Maven 3.6.3 or higher
-- MySQL 8.0 or PostgreSQL 13 or higher
-- Git
+### Backend
+
+- **Framework**: Spring Boot
+- **Database**: MySQL/PostgreSQL
+- **API**: RESTful services
+- **Deployment**: AWS EC2
 
 ## Getting Started
 
-### Backend Setup
+### Prerequisites
 
-1. Clone the repository:
+- Node.js (v14+)
+- npm (v6+)
+- Angular CLI (v16.2.0)
+
+### Installation
+
+1. Clone the repository
    ```bash
-   git clone [your-repository-url]
-   cd hotel-management-system/backend
+   git clone https://github.com/your-username/hotel-management-system.git
    ```
 
-2. Configure the database:
-   - Create a MySQL/PostgreSQL database named `hotel_management`
-   - Update `application.properties` with your database credentials
-
-3. Build and run the application:
+2. Navigate to the frontend directory
    ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-   The backend will be available at `http://localhost:8080`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd ../frontend
+   cd hotel-management-ui
    ```
 
-2. Install dependencies:
+3. Install dependencies
    ```bash
    npm install
    ```
 
-3. Start the development server:
+4. Start the development server
    ```bash
    ng serve
    ```
-   The frontend will be available at `http://localhost:4200`
+
+5. Navigate to `http://localhost:4200/`
+
+## Development
+
+### Development server
+
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+### Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+### Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+
+## Deployment
+
+The application is deployed on AWS:
+
+- **Frontend**: Amazon S3 static website hosting
+- **Backend**: Amazon EC2 instance
 
 ## Project Structure
 
 ```
-hotel-management-system/
-├── backend/               # Spring Boot application
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/hotel/...
-│   │   │   └── resources/
-│   │   └── test/
-│   └── pom.xml
-│
-└── frontend/              # Angular application
-    ├── src/
-    │   ├── app/
-    │   │   ├── components/
-    │   │   ├── services/
-    │   │   ├── models/
-    │   │   └── ...
-    │   ├── assets/
-    │   └── environments/
-    └── package.json
+src/
+├── app/
+│   ├── components/
+│   │   ├── admin/
+│   │   ├── booking-form/
+│   │   ├── hotel-form/
+│   │   ├── hotel-list/
+│   │   └── room-list/
+│   ├── models/
+│   │   ├── hotel.ts
+│   │   └── room.ts
+│   ├── services/
+│   │   ├── hotel.service.ts
+│   │   └── room.service.ts
+│   └── app.module.ts
+└── environments/
+    └── environment.ts
 ```
-
-## API Documentation
-
-API documentation is available at `http://localhost:8080/swagger-ui.html` when the backend is running.
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, please open an issue in the GitHub repository or contact the maintainers.
-
-## Acknowledgments
-
-- Spring Boot Team
-- Angular Team
-- All contributors who have helped improve this project
+This project is licensed under the MIT License - see the LICENSE file for details.

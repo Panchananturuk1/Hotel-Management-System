@@ -4,7 +4,7 @@ A comprehensive hotel management application built with Angular frontend and Spr
 
 ## Live Demo
 
-Access the live application at: [http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/hotels](http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com)
+Access the live application at: [http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com](http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com)
 
 ## Project Overview
 

@@ -29,6 +29,7 @@ export interface Room {
   view?: string; // e.g., 'Sea View', 'Garden View', 'City View'
   floor?: number;
   bedType?: string; // e.g., 'King', 'Queen', 'Twin'
+  imageUrl?: string; // Single image URL for room card display
   images?: string[]; // URLs to room images
   createdAt?: Date;
   updatedAt?: Date;
@@ -49,32 +50,32 @@ export interface RoomFilter {
 
 // Booking data
 export interface BookingData {
-  roomId: number;
+  roomId: string;
   customerName: string;
   customerEmail: string;
-  checkIn: Date;
-  checkOut: Date;
-  specialRequests?: string;
+  checkIn: string;
+  checkOut: string;
   guestCount: number;
+  specialRequests?: string;
   totalPrice?: number;
-  bookingDate?: Date;
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'CHECKED_IN' | 'CHECKED_OUT';
 }
 
-// Booking response
 export interface BookingResponse {
   id: number;
-  bookingNumber: string;
-  room: Room;
+  bookingNumber?: string;
+  roomId: string;
+  room?: Room;
   customerName: string;
   customerEmail: string;
-  checkIn: Date;
-  checkOut: Date;
+  checkIn: string;
+  checkOut: string;
   guestCount: number;
+  specialRequests?: string;
   totalPrice: number;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  bookingDate?: string;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'CHECKED_IN' | 'CHECKED_OUT';
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Room availability response
@@ -83,7 +84,7 @@ export interface RoomAvailability {
   available: boolean;
   message?: string;
   conflictingBookings?: {
-    checkIn: Date;
-    checkOut: Date;
+    checkIn: string;
+    checkOut: string;
   }[];
 }

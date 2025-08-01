@@ -109,6 +109,18 @@ export class RoomService {
       );
   }
 
+  // Check room availability with RoomAvailability response
+  checkRoomAvailability(roomId: string, checkIn: string, checkOut: string): Observable<RoomAvailability> {
+    const params = new HttpParams()
+      .set('checkIn', checkIn)
+      .set('checkOut', checkOut);
+
+    return this.http.get<RoomAvailability>(`${this.apiUrl}/${roomId}/availability`, { params })
+      .pipe(
+        catchError((error) => this.handleError<RoomAvailability>('checkRoomAvailability', { roomId: Number(roomId), available: false })(error))
+      );
+  }
+
   // Book a room
   bookRoom(bookingData: BookingData): Observable<BookingResponse> {
     return this.http.post<BookingResponse>(`${this.apiUrl}/${bookingData.roomId}/book`, bookingData).pipe(

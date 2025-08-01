@@ -1,0 +1,31 @@
+<div class="admin-panel">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="admin-sidebar">
+          <h3>Admin Panel</h3>
+          <ul class="admin-menu">
+            <li class="active"><a href="#"><i class="bi bi-building"></i> Manage Hotels</a></li>
+            <li><a href="#"><i class="bi bi-door-open"></i> Manage Rooms</a></li>
+            <li><a href="#"><i class="bi bi-calendar-check"></i> Manage Bookings</a></li>
+            <li><a href="#"><i class="bi bi-gear"></i> Settings</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="admin-content">
+          <!-- Add Hotel Form -->
+          <div class="card add-hotel-card">
+            <div class="card-header">
+              <h3><i class="bi bi-plus-circle"></i> Add New Hotel</h3>
+              <p class="text-muted">Create a new hotel property in your portfolio</p>
+            </div>
+            <div class="card-body">
+              <app-hotel-form (refresh)="loadHotels()"></app-hotel-form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,45 +1,239 @@
-<div class="container">
-  <header class="header">
-    <h1>Hotel Management System</h1>
+<div class="app-wrapper">
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <i class="bi bi-buildings"></i>
+          <h1>Luxury Hotels</h1>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a routerLink="/hotels" routerLinkActive="active">Hotels</a></li>
+            <li><a routerLink="/rooms" routerLinkActive="active">Rooms</a></li>
+            <li><a routerLink="/bookings" routerLinkActive="active">Bookings</a></li>
+            <li><a routerLink="/admin" routerLinkActive="active" class="admin-link"><i class="bi bi-shield-lock"></i> Admin</a></li>
+            <li><a href="#">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </header>
   
-  <main>
-    <app-hotel-list></app-hotel-list>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h2>Welcome to Luxury Hotel Management</h2>
+        <p>Manage your hotels, rooms, and bookings with our elegant and intuitive system</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
   </main>
+  
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <i class="bi bi-buildings"></i>
+          <span>Luxury Hotels</span>
+        </div>
+        <div class="footer-copyright">
+          <p>&copy; 2023 Luxury Hotel Management. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <style>
-  :host {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  /* App Layout */
+  .app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
+  
   .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 20px;
+    width: 100%;
   }
-
-  .header {
+  
+  /* Header Styles */
+  .app-header {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .logo i {
+    font-size: 1.75rem;
+    color: #3498db;
+  }
+  
+  .logo h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #2c3e50;
+  }
+  
+  /* Admin Link Style */
+  .admin-link {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 5px 10px !important;
+    color: #3498db !important;
+    font-weight: 500;
+  }
+  
+  .admin-link:hover {
+    background-color: #e9f5ff;
+  }
+  
+  .admin-link i {
+    margin-right: 5px;
+  }
+  
+  .main-nav ul {
+    display: flex;
+    list-style: none;
+    gap: 1.5rem;
+  }
+  
+  .main-nav a {
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    position: relative;
+    transition: color 0.3s;
+  }
+  
+  .main-nav a:hover, .main-nav a.active {
+    color: #3498db;
+  }
+  
+  .main-nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #3498db;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: white;
+    padding: 3rem 0;
     text-align: center;
-    margin-bottom: 30px;
-    padding: 20px 0;
-    border-bottom: 1px solid #eee;
   }
-
-  h1 {
-    color: #1976d2;
-    margin: 0 0 10px;
+  
+  .hero-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .hero-content p {
+    font-size: 1.25rem;
+    max-width: 700px;
+    margin: 0 auto;
+    opacity: 0.9;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+  }
+  
+  /* Footer */
+  .app-footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 2rem 0;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .footer-logo i {
+    font-size: 1.5rem;
+    color: #3498db;
+  }
+  
+  .footer-logo span {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .footer-copyright p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.875rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .main-nav ul {
+      gap: 1rem;
+    }
+    
+    .footer-content {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+    
+    .hero-content h2 {
+      font-size: 2rem;
+    }
+    
+    .hero-content p {
+      font-size: 1rem;
+    }
   }
 </style>
 

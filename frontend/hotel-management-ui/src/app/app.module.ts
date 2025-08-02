@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbDateParserFormatter, NgbDatepickerModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ErrorInterceptor } from './services/error-interceptor.service';
 
 import { AppComponent } from './app.component';
 import { HotelListComponent } from './components/hotel-list/hotel-list.component';
@@ -15,6 +17,9 @@ import { HotelService } from './services/hotel.service';
 import { RoomService } from './services/room.service';
 import { CustomDateParserFormatter } from './helpers/custom-date-parser-formatter';
 import { AdminComponent } from './components/admin/admin.component';
+import { LoginComponent } from './components/auth/login/login.component';
+import { SignupComponent } from './components/auth/signup/signup.component';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -22,6 +27,7 @@ import { AdminComponent } from './components/admin/admin.component';
     HotelListComponent,
     HotelFormComponent,
     AdminComponent
+    // LoginComponent and SignupComponent are standalone components and should not be declared here
   ],
   imports: [
     BrowserModule,
@@ -34,12 +40,18 @@ import { AdminComponent } from './components/admin/admin.component';
     NgbAlertModule,
     AppRoutingModule,
     RoomListComponent,
-    BookingFormComponent
+    BookingFormComponent,
+    // Import standalone components here
+    LoginComponent,
+    SignupComponent
   ],
   providers: [
     HotelService,
     RoomService,
-    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
+    AuthService,
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

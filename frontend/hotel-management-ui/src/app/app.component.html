@@ -14,6 +14,13 @@
             <li><a routerLink="/bookings" routerLinkActive="active">Bookings</a></li>
             <li><a routerLink="/admin" routerLinkActive="active" class="admin-link"><i class="bi bi-shield-lock"></i> Admin</a></li>
             <li><a href="#">About</a></li>
+            <ng-container *ngIf="!authService.isLoggedIn(); else loggedIn">
+              <li><a routerLink="/login" routerLinkActive="active" class="auth-link"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+            </ng-container>
+            <ng-template #loggedIn>
+              <li><a href="javascript:void(0)" (click)="logout()" class="auth-link logout-link"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+              <li><a class="user-info"><i class="bi bi-person-circle"></i> {{ authService.currentUserValue?.username }}</a></li>
+            </ng-template>
           </ul>
         </nav>
       </div>

@@ -73,24 +73,6 @@
   margin-right: 5px;
 }
 
-/* Login Button Style */
-.login-btn {
-  background-color: #3498db;
-  border-radius: 4px;
-  padding: 5px 15px !important;
-  color: white !important;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
-
-.login-btn:hover {
-  background-color: #2980b9;
-}
-
-.login-btn i {
-  margin-right: 5px;
-}
-
 .main-nav ul {
   display: flex;
   list-style: none;

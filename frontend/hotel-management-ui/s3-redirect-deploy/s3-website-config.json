@@ -1,0 +1,76 @@
+{
+  "IndexDocument": {
+    "Suffix": "index.html"
+  },
+  "ErrorDocument": {
+    "Key": "index.html"
+  },
+  "RoutingRules": [
+    {
+      "Condition": {
+        "HttpErrorCodeReturnedEquals": "403"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    },
+    {
+      "Condition": {
+        "HttpErrorCodeReturnedEquals": "404"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    },
+    {
+      "Condition": {
+        "KeyPrefixEquals": "hotels"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    },
+    {
+      "Condition": {
+        "KeyPrefixEquals": "rooms"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    },
+    {
+      "Condition": {
+        "KeyPrefixEquals": "bookings"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    },
+    {
+      "Condition": {
+        "KeyPrefixEquals": "admin"
+      },
+      "Redirect": {
+        "ReplaceKeyWith": "index.html",
+        "Protocol": "http",
+        "HostName": "hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+        "HttpRedirectCode": "200"
+      }
+    }
+  ]
+}

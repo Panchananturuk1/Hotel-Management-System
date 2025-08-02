@@ -1,88 +1,169 @@
-# S3 Redirect Deployment Tool
+# S3 Deployment Guide for Hotel Management UI
 
-This directory contains scripts to automate the configuration of AWS S3 bucket redirection for the Hotel Management UI application.
+## Overview
 
-## Purpose
-
-These scripts help configure your S3 bucket to redirect the root URL (`http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com`) to the hotels page (`http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/hotels`).
+This guide provides instructions for deploying the Angular application to AWS S3 static website hosting with proper routing configuration to handle client-side routing. The configuration solves the common issue where direct access to routes like `/hotels` returns a 403 Forbidden error.
 
 ## Prerequisites
 
-- Node.js (v12+)
-- npm (v6+)
 - AWS CLI installed and configured with appropriate credentials
-- AWS credentials with permissions to modify S3 bucket configuration
+- Angular application built for production
 
-## Configuration
+## Understanding the Problem
 
-Before running the deployment scripts, you may need to update the following constants in the `deploy-s3-redirect.js` file:
+When deploying an Angular application to S3 static website hosting, direct access to routes like `http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/hotels` can result in 403 Forbidden errors. This happens because:
 
-```javascript
-// Update these constants with your S3 bucket information
-const BUCKET_NAME = 'hotel-management-ui';
-const REGION = 'ap-south-1';
+1. S3 looks for a file at the path `/hotels` which doesn't exist
+2. By default, S3 returns a 403 error when a file is not found
+3. Angular's client-side routing needs all routes to serve the `index.html` file
+
+## Solution
+
+The solution involves configuring the S3 bucket with:
+
+1. Proper website configuration with routing rules
+2. Appropriate bucket policy for public access
+3. Disabled block public access settings
+
+## Files in this Directory
+
+- `s3-website-config.json`: S3 website configuration with routing rules
+- `bucket-policy.json`: S3 bucket policy for public read access
+- `deploy.ps1`: PowerShell deployment script for S3
+- `deploy.sh`: Bash deployment script for S3
+- `deploy-cloudfront.ps1`: PowerShell deployment script for S3 + CloudFront (HTTPS)
+- `deploy-cloudfront.sh`: Bash deployment script for S3 + CloudFront (HTTPS)
+- `cloudfront-config.json`: CloudFront distribution configuration
+- `error.html`: Custom error page for S3 (optional)
+- `test.html`: Test file to verify S3 configuration
+
+## Deployment Options
+
+### Option 1: S3 Only (HTTP)
+
+This option deploys your Angular app to S3 static website hosting. It's simpler but only supports HTTP (not HTTPS).
+
+#### For Windows (PowerShell)
+
+```powershell
+.\deploy.ps1
 ```
 
-Change these values to match your S3 bucket name and region if different.
+#### For Linux/macOS (Bash)
 
-## Usage
+```bash
+chmod +x ./deploy.sh
+./deploy.sh
+```
 
-### Windows
+### Option 2: S3 + CloudFront (HTTPS)
 
-1. Open Command Prompt or PowerShell
-2. Navigate to this directory
-3. Run the deployment script:
-   ```
-   deploy.bat
-   ```
+This option deploys your Angular app to S3 and creates a CloudFront distribution in front of it. This provides HTTPS support and better performance through CDN caching.
 
-### Unix/Linux/Mac
+#### For Windows (PowerShell)
 
-1. Open Terminal
-2. Navigate to this directory
-3. Make the script executable:
-   ```bash
-   chmod +x deploy.sh
-   ```
-4. Run the deployment script:
-   ```bash
-   ./deploy.sh
-   ```
+```powershell
+.\deploy-cloudfront.ps1
+```
 
-### Manual Execution
+#### For Linux/macOS (Bash)
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Run the deployment script:
-   ```bash
-   npm run deploy
-   ```
+```bash
+chmod +x ./deploy-cloudfront.sh
+./deploy-cloudfront.sh
+```
 
-## What the Script Does
+### Option 3: Manual Deployment
 
-The deployment script performs the following actions:
+#### 1. Build the Angular application
 
-1. Uploads the `redirect.html` file as `index.html` to your S3 bucket
-2. Sets the appropriate metadata for redirection
-3. Configures the S3 bucket website settings with routing rules
+```bash
+ng build --configuration production
+```
+
+This will create a `dist/hotel-management-ui` folder with the production build.
+
+#### 2. Create or update S3 bucket for static website hosting
+
+```bash
+aws s3 mb s3://hotel-management-ui --region ap-south-1
+```
+
+#### 3. Configure S3 bucket for static website hosting with routing rules
+
+```bash
+aws s3api put-bucket-website --bucket hotel-management-ui --website-configuration file://s3-redirect-deploy/s3-website-config.json
+```
+
+#### 4. Set bucket policy to allow public read access
+
+```bash
+aws s3api put-bucket-policy --bucket hotel-management-ui --policy file://s3-redirect-deploy/bucket-policy.json
+```
+
+#### 5. Disable block public access settings
+
+```bash
+aws s3api put-public-access-block --bucket hotel-management-ui --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
+```
+
+#### 6. Upload the built application to S3
+
+```bash
+aws s3 sync dist/hotel-management-ui/ s3://hotel-management-ui --delete
+```
+
+## Testing the Configuration
+
+Before deploying the full Angular application, you can test if the S3 bucket is correctly configured by:
+
+1. Uploading the `test.html` file as `index.html` to your S3 bucket:
+
+```bash
+aws s3 cp s3-redirect-deploy/test.html s3://hotel-management-ui/index.html
+```
+
+2. Visit the S3 website URL: http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com
+
+3. Click on the test links to verify that routing is working correctly
 
 ## Troubleshooting
 
-If you encounter issues during deployment:
+### 403 Forbidden / Access Denied
 
-1. Check your AWS credentials are properly configured
-2. Verify you have the necessary permissions to modify the S3 bucket
-3. Ensure the S3 bucket exists and is configured for static website hosting
-4. Check the console output for specific error messages
+If you encounter a 403 Forbidden error:
 
-## Testing
+1. Verify that the bucket policy is correctly applied
+2. Ensure the S3 bucket has public access enabled (unblock all public access settings)
+3. Check that the website configuration is properly set up
 
-After successful deployment, you can test the redirection by:
+### Routing Issues
 
-1. Opening a web browser
-2. Navigating to your S3 website endpoint: `http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/`
-3. Verifying you are automatically redirected to the hotels page
+If direct URLs like `/hotels` return 403 errors:
 
-Alternatively, use the `test-redirect.html` file in the parent directory to test the redirection.
+1. Ensure the routing rules in `s3-website-config.json` are correctly configured
+2. Verify that the error document is set to `index.html`
+3. Make sure the Angular app's routing module has the appropriate routes defined
+
+### CORS Issues
+
+If you experience CORS issues when the application makes API calls:
+
+1. Configure CORS on your API server to allow requests from the S3 website domain
+2. Alternatively, use the CloudFront deployment option with a custom domain
+
+### CloudFront Issues
+
+If you're using CloudFront and experiencing issues:
+
+1. CloudFront distributions take 5-15 minutes to deploy changes
+2. Check that the origin domain name is correctly set to your S3 website endpoint (not the S3 bucket endpoint)
+3. Verify that the error responses are configured to redirect to `/index.html`
+
+## Important Notes
+
+- The S3 bucket name must match the one in the configuration files
+- The bucket policy grants public read access to all objects in the bucket
+- The routing rules redirect 403 and 404 errors to the index.html file, allowing Angular's router to handle the routing
+- S3 website hosting only supports HTTP, not HTTPS. For HTTPS, use the CloudFront deployment option
+- CloudFront provides HTTPS, better performance, and additional security features

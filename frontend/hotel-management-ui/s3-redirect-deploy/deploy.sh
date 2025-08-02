@@ -1,54 +1,48 @@
 #!/bin/bash
 
-echo "==================================================="
-echo "S3 Redirect Deployment Script"
-echo "==================================================="
-echo 
+# Bash script for deploying Angular app to S3 with proper routing configuration
 
-# Check for Node.js installation
-if ! command -v node &> /dev/null; then
-    echo "Error: Node.js is not installed or not in your PATH."
-    echo "Please install Node.js from https://nodejs.org/"
-    exit 1
+# Configuration
+BUCKET_NAME="hotel-management-ui"
+REGION="ap-south-1"
+DIST_FOLDER="../dist/hotel-management-ui"
+
+# Exit on error
+set -e
+
+# Build the Angular application
+echo "Building Angular application..."
+cd ..
+ng build --configuration production
+cd s3-redirect-deploy
+
+# Check if the bucket exists, create if it doesn't
+echo "Checking if bucket exists..."
+if ! aws s3 ls "s3://$BUCKET_NAME" 2>&1 > /dev/null; then
+    echo "Creating bucket $BUCKET_NAME in region $REGION..."
+    aws s3 mb "s3://$BUCKET_NAME" --region $REGION
 fi
 
-# Check for AWS CLI installation
-if ! command -v aws &> /dev/null; then
-    echo "Warning: AWS CLI is not installed or not in your PATH."
-    echo "You may need to configure AWS credentials manually."
-    echo 
-    echo "Continuing anyway..."
-fi
+# Configure bucket for static website hosting
+echo "Configuring bucket for static website hosting..."
+aws s3 website "s3://$BUCKET_NAME" --index-document index.html --error-document index.html
 
-# Change to script directory
-cd "$(dirname "$0")"
+# Apply website configuration with routing rules
+echo "Applying website configuration with routing rules..."
+aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file://s3-website-config.json
 
-# Install dependencies
-echo "Installing dependencies..."
-npm install
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to install required npm packages."
-    exit 1
-fi
+# Set bucket policy to allow public read access
+echo "Setting bucket policy to allow public read access..."
+aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy file://bucket-policy.json
 
-echo 
-echo "Running S3 redirect deployment script..."
-npm run deploy
+# Disable block public access settings
+echo "Disabling block public access settings..."
+aws s3api put-public-access-block --bucket $BUCKET_NAME --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
 
-if [ $? -ne 0 ]; then
-    echo 
-    echo "Error: Deployment script failed."
-    exit 1
-else
-    echo 
-    echo "Deployment completed successfully!"
-    echo 
-    echo "You can now access your website at:"
-    echo "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com/"
-    echo 
-    echo "The root URL should automatically redirect to /hotels"
-fi
+# Upload the built application to S3
+echo "Uploading application to S3..."
+aws s3 sync $DIST_FOLDER "s3://$BUCKET_NAME" --delete
 
-echo 
-echo "Press Enter to continue..."
-read
+# Output the website URL
+echo "Deployment completed successfully!"
+echo "Website URL: http://$BUCKET_NAME.s3-website.$REGION.amazonaws.com"

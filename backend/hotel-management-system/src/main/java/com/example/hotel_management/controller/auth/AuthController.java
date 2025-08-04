@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:58608", "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com", "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"}, allowCredentials = "true", maxAge = 3600)
 public class AuthController {
 
     private final AuthService authService;

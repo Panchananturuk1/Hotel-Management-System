@@ -8,9 +8,12 @@ import com.example.hotel_management.model.auth.User;
 import com.example.hotel_management.repository.auth.UserRepository;
 import com.example.hotel_management.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
@@ -52,7 +55,12 @@ public class AuthService {
         userRepository.save(user);
 
         // Generate JWT token
-        String token = jwtTokenProvider.generateToken(user.getUsername());
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        String token = jwtTokenProvider.generateToken(userDetails);
 
         return new AuthResponse(true, "User registered successfully", token, new UserDto(user));
     }
@@ -71,7 +79,12 @@ public class AuthService {
         }
 
         // Generate JWT token
-        String token = jwtTokenProvider.generateToken(user.getUsername());
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        String token = jwtTokenProvider.generateToken(userDetails);
 
         return new AuthResponse(true, "Login successful", token, new UserDto(user));
     }

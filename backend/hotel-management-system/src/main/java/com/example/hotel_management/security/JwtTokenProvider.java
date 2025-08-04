@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,17 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration:86400000}") // 24 hours in milliseconds
     private long jwtExpiration;
+    
+    // Secure signing key for HS512 algorithm
+    private Key signingKey;
 
+    // Initialize the signing key
+    @PostConstruct
+    public void init() {
+        // Generate a secure key for HS512 algorithm
+        this.signingKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    }
+    
     // Generate token for user
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
@@ -34,15 +45,12 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
-        // Use Keys.hmacShaKeyFor for better security
-        Key signingKey = Keys.hmacShaKeyFor(secret.getBytes());
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(signingKey, SignatureAlgorithm.HS512)
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -64,7 +72,6 @@ public class JwtTokenProvider {
 
     // Extract all claims from token
     private Claims extractAllClaims(String token) {
-        Key signingKey = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()

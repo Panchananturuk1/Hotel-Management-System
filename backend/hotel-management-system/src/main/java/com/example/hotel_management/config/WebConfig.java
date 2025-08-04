@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         
         // Set specific allowed origins (not patterns) when using credentials
         config.setAllowedOrigins(Arrays.asList(
+          "http://localhost:58608",
           "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
           "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
         ));
@@ -42,6 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedOriginPatterns(
                 "http://localhost:3000",
                 "http://localhost:8080",
+                "http://localhost:58608",
                 "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
                 "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
                 "http://*.s3-website.ap-south-1.amazonaws.com"

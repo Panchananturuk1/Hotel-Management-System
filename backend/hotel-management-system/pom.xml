@@ -97,7 +97,8 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.5</version>
             <scope>runtime</scope>
-        </dependency>\n    </dependencies>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

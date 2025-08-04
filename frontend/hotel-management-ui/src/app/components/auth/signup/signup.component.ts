@@ -53,9 +53,9 @@ export class SignupComponent {
       next: (response) => {
         this.loading = false;
         if (response.success) {
-          this.success = 'Registration successful!';
+          this.success = 'Registration successful! Redirecting to login page...';
           setTimeout(() => {
-            this.router.navigate(['/']);
+            this.router.navigate(['/login']);
           }, 1500);
         } else {
           this.error = response.message || 'Registration failed';

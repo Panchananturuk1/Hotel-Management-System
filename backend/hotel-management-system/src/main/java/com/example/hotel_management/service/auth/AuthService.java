@@ -66,8 +66,15 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest loginRequest) {
+        // Try to find user by username first
         Optional<User> userOptional = userRepository.findByUsername(loginRequest.getUsername());
+        
+        // If not found by username, try by email
+        if (userOptional.isEmpty()) {
+            userOptional = userRepository.findByEmail(loginRequest.getUsername());
+        }
 
+        // If user not found by either username or email
         if (userOptional.isEmpty()) {
             return new AuthResponse(false, "Invalid username or password");
         }

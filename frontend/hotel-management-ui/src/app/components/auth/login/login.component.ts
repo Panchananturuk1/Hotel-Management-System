@@ -24,7 +24,7 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });

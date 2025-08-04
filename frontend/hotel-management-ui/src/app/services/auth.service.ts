@@ -15,7 +15,7 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://localhost:8081/api/auth';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -58,19 +58,8 @@ export class AuthService {
     firstName?: string;
     lastName?: string;
   }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, user)
-      .pipe(
-        tap(response => {
-          if (response.success && response.user && response.token) {
-            const newUser = {
-              ...response.user,
-              token: response.token
-            };
-            localStorage.setItem('currentUser', JSON.stringify(newUser));
-            this.currentUserSubject.next(newUser);
-          }
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, user);
+    // Removed the auto-login functionality to redirect to login page instead
   }
 
   logout(): void {

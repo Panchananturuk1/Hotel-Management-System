@@ -13,22 +13,21 @@
         <span>{{ error }}</span>
       </div>
 
-      <!-- Email Field -->
+      <!-- Username/Email Field -->
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="username">Username or Email</label>
         <div class="input-with-icon">
-          <i class="bi bi-envelope"></i>
+          <i class="bi bi-person"></i>
           <input
-            type="email"
-            id="email"
+            type="text"
+            id="username"
             formControlName="username"
-            placeholder="Enter your email"
+            placeholder="Enter your username or email"
             [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
           >
         </div>
         <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error-message">
-          <span *ngIf="loginForm.get('username')?.errors?.['required']">Email is required</span>
-          <span *ngIf="loginForm.get('username')?.errors?.['email']">Please enter a valid email address</span>
+          <span *ngIf="loginForm.get('username')?.errors?.['required']">Username is required</span>
         </div>
       </div>
 

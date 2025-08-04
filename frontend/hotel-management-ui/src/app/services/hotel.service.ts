@@ -8,7 +8,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class HotelService {
   // Update this URL to your EC2 public IP and port
-  private baseUrl = 'http://52.66.135.123:8080/api/hotels';
+  private baseUrl = 'http://localhost:8081/api/hotels';
   
   // Subject for hotel list refresh
   private refreshHotelsSubject = new Subject<void>();

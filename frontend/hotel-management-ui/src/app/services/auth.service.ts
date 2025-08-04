@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../models/user';
 import { JwtService } from './jwt.service';
+import { environment } from '../../environments/environment';
 
 interface AuthResponse {
   success: boolean;
@@ -15,7 +16,7 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8081/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -72,14 +73,14 @@ export class AuthService {
     if (!currentUser || !currentUser.token) {
       return false;
     }
-    
+
     // Check if token is expired
     if (this.jwtService.isTokenExpired(currentUser.token)) {
       // Token is expired, log the user out
       this.logout();
       return false;
     }
-    
+
     return true;
   }
 }

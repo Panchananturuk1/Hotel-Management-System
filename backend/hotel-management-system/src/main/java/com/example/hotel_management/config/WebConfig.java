@@ -22,13 +22,15 @@ public class WebConfig implements WebMvcConfigurer {
         config.setAllowCredentials(true);
         
         // Set specific allowed origins (not patterns) when using credentials
+        // S3 website URLs use http, not https
         config.setAllowedOrigins(Arrays.asList(
           "http://localhost:4200",
-          "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
-          "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
+          "http://localhost:3000",
+          "http://localhost:58608",
+          "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
         ));
         
-        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
         config.setMaxAge(3600L);
@@ -46,13 +48,11 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://localhost:8080",
                 "http://localhost:8081",
                 "http://localhost:58608",
-                "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
-                "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
-                "http://*.s3-website.ap-south-1.amazonaws.com"
+                "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*")
-            .exposedHeaders("*")
+            .allowedHeaders("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With")
+            .exposedHeaders("Authorization")
             .allowCredentials(true)
             .maxAge(3600);
     }

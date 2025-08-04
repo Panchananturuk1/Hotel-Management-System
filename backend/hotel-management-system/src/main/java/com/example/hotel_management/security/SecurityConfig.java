@@ -52,14 +52,14 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:3000", 
+            "http://localhost:4200", 
             "http://localhost:58608", 
-            "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com", 
-            "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
+            "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
         ));
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With", "x-auth-token"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "x-auth-token"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

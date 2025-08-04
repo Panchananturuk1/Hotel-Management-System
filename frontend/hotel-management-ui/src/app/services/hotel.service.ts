@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Hotel } from '../models/hotel';
 import { Observable, Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HotelService {
   // Update this URL to your EC2 public IP and port
-  private baseUrl = 'http://localhost:8081/api/hotels';
-  
+  private baseUrl = `${environment.apiUrl}/api/hotels`;
+
   // Subject for hotel list refresh
   private refreshHotelsSubject = new Subject<void>();
 

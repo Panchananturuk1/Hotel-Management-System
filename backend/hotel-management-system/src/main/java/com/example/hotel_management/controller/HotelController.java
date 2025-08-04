@@ -8,7 +8,7 @@ import com.example.hotel_management.service.HotelService;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000", "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com", "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "http://localhost:58608", "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"}, allowCredentials = "true", maxAge = 3600)
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {

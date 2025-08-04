@@ -27,7 +27,8 @@ public class WebConfig implements WebMvcConfigurer {
           "http://localhost:4200",
           "http://localhost:3000",
           "http://localhost:58608",
-          "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
+          "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+          "http://52.66.135.123:8080"
         ));
         
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"));
@@ -48,7 +49,8 @@ public class WebConfig implements WebMvcConfigurer {
                 "http://localhost:8080",
                 "http://localhost:8081",
                 "http://localhost:58608",
-                "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
+                "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+                "http://52.66.135.123:8080"
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With")

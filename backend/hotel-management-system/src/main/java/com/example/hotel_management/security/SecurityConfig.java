@@ -54,7 +54,8 @@ public class SecurityConfig {
             "http://localhost:3000", 
             "http://localhost:4200", 
             "http://localhost:58608", 
-            "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com"
+            "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+            "http://52.66.135.123:8080"
         ));
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

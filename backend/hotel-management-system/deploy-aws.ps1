@@ -37,11 +37,11 @@ ssh -i "your-key.pem" ec2-user@52.66.135.123 @"
     
     echo '✅ Application restarted!'
     echo '📋 Check logs with: tail -f app.log'
-    echo '🌐 API URL: http://52.66.135.123:8080'
-    echo '🔍 Health check: http://52.66.135.123:8080/api/health'
+    echo '🌐 API URL: http://52.66.135.123:8081'
+    echo '🔍 Health check: http://52.66.135.123:8081/api/health'
 "@
 
 Write-Host "🎉 Deployment completed!" -ForegroundColor Green
 Write-Host "🔗 Frontend URL: http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com" -ForegroundColor Cyan
-Write-Host "🔗 Backend API: http://52.66.135.123:8080" -ForegroundColor Cyan
-Write-Host "🔍 Test API: http://52.66.135.123:8080/api/health" -ForegroundColor Cyan 
+Write-Host "🔗 Backend API: http://52.66.135.123:8081" -ForegroundColor Cyan
+Write-Host "🔍 Test API: http://52.66.135.123:8081/api/health" -ForegroundColor Cyan

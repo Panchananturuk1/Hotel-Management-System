@@ -10,10 +10,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedOrigins(
+                    "http://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+                    "https://hotel-management-ui.s3-website.ap-south-1.amazonaws.com",
+                    "http://localhost:3000"  // For local development
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(false)
+                .allowCredentials(true)
+                .exposedHeaders("Authorization", "Content-Type")
                 .maxAge(3600);
     }
 }
